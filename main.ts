@@ -1,6 +1,8 @@
 // The GPS Swears It Was a Shortcut
 // Node standard library only. Writes the GPS's one-line excuse to
 // /output/entry.txt, then reads it back and validates it.
+// The line is a single smug, defensive sentence in the GPS's own voice:
+// it blames the map (and the goat) rather than itself.
 import { mkdirSync, writeFileSync, readFileSync, chmodSync } from "node:fs";
 
 const LINE =
@@ -24,5 +26,8 @@ if (back.includes("\n") || back.includes("\r")) {
   fail("entry must be a single line");
 }
 if (back.trim().length === 0) fail("entry must not be only whitespace");
+if (/[\u0000-\u001f]/.test(back)) {
+  fail("entry must not contain control characters");
+}
 
 console.log(`ok: wrote ${back.length} characters to /output/entry.txt`);
